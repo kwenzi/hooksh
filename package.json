@@ -1,0 +1,33 @@
+{
+  "name": "deploy",
+  "version": "1.0.0",
+  "description": "Webhook server to trigger custom shell scripts.",
+  "main": "index.js",
+  "engines": {
+    "node": "7.5.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node build/server/index.js",
+    "nodemon": "nodemon --watch build/server --watch build/lib --inspect -- build/server/index.js",
+    "build": "gulp build",
+    "watch": "gulp watch"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "4.14.1"
+  },
+  "devDependencies": {
+    "babel-core": "6.23.1",
+    "babel-preset-es2015": "6.22.0",
+    "del": "2.2.2",
+    "gulp": "3.9.1",
+    "gulp-babel": "6.1.2",
+    "gulp-concat": "2.6.1",
+    "gulp-sourcemaps": "2.4.1",
+    "gulp-uglify": "2.0.1",
+    "gulp-util": "3.0.8",
+    "nodemon": "1.11.0"
+  }
+}
