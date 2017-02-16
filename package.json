@@ -16,7 +16,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "4.14.1"
+    "body-parser": "1.16.1",
+    "express": "4.14.1",
+    "morgan": "1.8.1"
   },
   "devDependencies": {
     "babel-core": "6.23.1",
