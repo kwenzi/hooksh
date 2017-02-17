@@ -1,6 +1,6 @@
 import gulp from 'gulp';
 import clean from './clean';
-//import copy from './assets';
+import copy from './assets';
 //import favicons from './favicons';
 //import * as css from './css';
 //import * as views from './views';
@@ -21,6 +21,12 @@ const tasks = [
     src: ['lib/**/*.js'],
     prod: babelify.prod,
     dev: babelify.dev,
+  },
+  {
+    name: 'config',
+    src: ['config.yaml'],
+    prod: copy,
+    dev: copy,
   },
 ]
 

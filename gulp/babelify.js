@@ -5,7 +5,7 @@ import sourcemaps from 'gulp-sourcemaps';
 import babel from 'gulp-babel';
 import concat from 'gulp-concat';
 
-const babelPresets = {'presets': [ 'es2015']}
+const babelPresets = {'presets': [ 'es2015', 'stage-0']}
 
 /**
  * Babel transform, include sourcemaps as separate files
