@@ -1,75 +1,9 @@
 import express from 'express';
-import {spawn} from 'child_process';
+import Store from './processStore';
 import decodedContent from './readConfig';
-import {v1} from 'uuid';
 
 const router = express.Router();
-
-const executions = {};
-const allIds = [];
-
-const launch = (command, args, options) => {
-  const id = v1();
-  allIds.push(id);
-  executions[id] = {
-    command,
-    args,
-    options,
-    launchError: null,
-    executionError: null,
-    log: [],
-    startTime: Date.now(),
-    endDate: null,
-    exitCode: null,
-    signal: null,
-    child: null,
-  }
-
-  const execution = executions[id];
-  try {
-    execution.child = spawn(command, args, options);
-
-    execution.child.stdout.on('data', (data) => {
-      execution.log.push({
-        time: Date.now(),
-        io: 'stdout',
-        data: data.toString(),
-      })
-    });
-
-    execution.child.stderr.on('data', (data) => {
-      execution.log.push({
-        time: Date.now(),
-        io: 'stderr',
-        data: data.toString(),
-      })
-    });
-
-    // emitted when the stdio streams of a child process have been closed.
-    /*
-    cmdSpawn.on('close', (code, signal) => {
-      console.log(`command ${command} closed with code ${code}, terminated by signal ${signal}`);
-    });
-    */
-
-    // emitted after the child process ends.
-    execution.child.on('exit', (code, signal) => {
-      execution.endDate = Date.now();
-      execution.exitCode = code;
-      execution.signal = signal;
-    });
-
-    execution.child.on('error', (error) => {
-      execution.endDate = Date.now();
-      execution.executionError = error;
-    });
-  } catch (error) {
-    execution.endDate = Date.now();
-    execution.launchError = error;
-  }
-
-  return id;
-}
+const store = new Store();
 
 /**
  * Launch a new unique command execution.
@@ -85,7 +19,7 @@ router.post('/:cmd', (req, res, next) => {
       ...options
     } = description;
 
-    const id = launch(command, args, options);
+    const id = store.new(command, args, options);
     res.send(id);
   } else {
     return next();
@@ -108,10 +42,9 @@ router.post('/:cmd', (req, res, next) => {
  */
 router.get('/:id', (req, res, next) => {
   const {id} = req.params;
-  const execution = executions[id];
+  const execution = store.get(id);
   if (execution){
-    const {child, ...rest} = execution;
-    return res.json(rest);
+    return res.json(execution.getInfo());
   }
   return next();
 });
@@ -120,26 +53,41 @@ router.get('/:id', (req, res, next) => {
  * List command execution instances.
  */
 router.get('/', (req, res, next) => {
-  return res.json(allIds);
+  return res.json(store.getAll());
 })
 
 /**
- * Kill command execution (with a specific signal), or
- * remove finished process.
+ * Kill command execution.
  */
-router.delete('/:id/:signal?', (req, res, next) => {
-  const {id, signal} = req.params;
-  const execution = executions[id];
+router.delete('/:id', (req, res, next) => {
+  const {id} = req.params;
+  const execution = store.get(id);
   if (execution){
     try {
-      execution.child.kill(signal);
-    } catch (err) {
-      console.log(err);
+      execution.terminate();
+    } catch (error) {
       return res.sendStatus(500);
     }
     return res.sendStatus(200);
   }
   return next();
+});
+
+/**
+ * Send a signal to a given command execution.
+ */
+router.patch('/:id/:signal?', (req, res, next) => {
+   const {id, signal} = req.params;
+   const execution = store.get(id);
+   if (execution){
+     try {
+       execution.terminate(signal);
+     } catch (error) {
+       return res.sendStatus(500);
+     }
+     return res.sendStatus(200);
+   }
+   return next();
 });
 
 export default router;
