@@ -1,13 +1,14 @@
 import {spawn} from 'child_process';
 import {v1} from 'uuid';
 
+// TODO: auto remove old/finished processes. limit io storage..
 const Store = class {
   constructor() {
     this.executions = {};
     this.allIds = [];
   }
 
-  new (command, args, options) {
+  new(command, args, options) {
     const execution = new Execution(command, args, options);
     const id = v1();
     this.allIds.push(id);
@@ -75,15 +76,15 @@ const Execution = class {
     });
   };
 
-  getInfo() {
-    /**
-    *   - failed launching
-    *   - running
-    *   - finished
-    *     - success
-    *     - error
-    *     - terminated
-    */
+  /**
+  *   - failed launching
+  *   - running
+  *   - finished
+  *     - success
+  *     - error
+  *     - terminated
+  */
+  getStatus() {
     let status = null;
     if (this.launchError.length > 0) {
       status = 'FAILED';
@@ -96,14 +97,17 @@ const Execution = class {
     } else {
       status = 'ERROR';
     }
+    return status;
+  }
 
+  getInfo() {
     return {
       description: {
         command: this.command,
         args: this.args,
         options: this.options,
       },
-      status,
+      status: this.getStatus(),
       errors: [...this.launchError, ...this.executionError],
       started: this.startTime,
       duration: this.startTime ? this.endTime - this.startTime : 0,

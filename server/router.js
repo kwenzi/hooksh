@@ -5,6 +5,8 @@ import decodedContent from './readConfig';
 const router = express.Router();
 const store = new Store();
 
+// TODO: manage authorization tokens
+
 /**
  * Launch a new unique command execution.
  * Return command execution id.
@@ -51,6 +53,7 @@ router.get('/:id', (req, res, next) => {
 
 /**
  * List command execution instances.
+ * TODO: filter on status, on date.
  */
 router.get('/', (req, res, next) => {
   return res.json(store.getAll());
