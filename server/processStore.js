@@ -117,7 +117,7 @@ const Execution = class {
     }
   }
 
-  terminate(singal) {
+  terminate(signal) {
     try {
       this.child.kill(signal);
     } catch (error) {

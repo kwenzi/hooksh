@@ -30,36 +30,35 @@ NODE_ENV=production npm start
 curl -vX POST localhost:3000/pull -vv
 > POST /pull HTTP/1.1
 < HTTP/1.1 200 OK
-363f6350-f81e-11e6-9cba-dfc9161f5816
+0f7b5910-f821-11e6-ac11-257a8674981b
 ```
 
 ### Inspect a command
 
 ```
-curl -v localhost:3000/363f6350-f81e-11e6-9cba-dfc9161f5816
-> GET /363f6350-f81e-11e6-9cba-dfc9161f5816 HTTP/1.1
+curl -v localhost:3000/0f7b5910-f821-11e6-ac11-257a8674981b
+> GET /0f7b5910-f821-11e6-ac11-257a8674981b HTTP/1.1
 < HTTP/1.1 200 OK
 {
   "description":{
     "command":"git",
     "args":["pull"],
     "options":{
-      "cwd":"/Users/dral/Git/kwenzi/deploy"
+      "cwd":"/Users/dral/Git/kwenzi/hooksh"
     }
   },
-  "status":"ERROR",
+  "status":"SUCCESS",
   "errors":[],
-  "started":1487671932421,
-  "duration":22,
-  "exitCode":128,
+  "started":1487673155874,
+  "duration":1053,
+  "exitCode":0,
   "exitSignal":null,
   "io":[
-    {
-      "timeStamp":1487671932443,
-      "io":"stderr",
-      "data":"fatal: Not a git repository (or any of the parent directories): .git\n"
-    }
-  ]
+  {
+    "timeStamp":1487673156925,
+    "io":"stdout",
+    "data":"Already up-to-date.\n"
+  }]
 }
 ```
 note: response has been formatted.
@@ -70,7 +69,7 @@ note: response has been formatted.
 curl -v localhost:3000
 > GET / HTTP/1.1
 < HTTP/1.1 200 OK
-["31aff020-f81e-11e6-9cba-dfc9161f5816","363f6350-f81e-11e6-9cba-dfc9161f5816"]
+["0f7b5910-f821-11e6-ac11-257a8674981b"]
 ```
 
 
@@ -79,17 +78,17 @@ curl -v localhost:3000
 Equivalent of sending a SIGTERM signal.
 
 ```
-curl -vX DELETE localhost:3000/363f6350-f81e-11e6-9cba-dfc9161f5816
-> DELETE /363f6350-f81e-11e6-9cba-dfc9161f5816 HTTP/1.1
-< HTTP/1.1 500 Internal Server Error
-Internal Server Error
+curl -vX DELETE localhost:3000/0f7b5910-f821-11e6-ac11-257a8674981b
+> DELETE /0f7b5910-f821-11e6-ac11-257a8674981b HTTP/1.1
+< HTTP/1.1 200 OK
+OK
 ```
 
 ### Send a signal to a running command
 
 ```
-curl -vX PATCH localhost:3000/363f6350-f81e-11e6-9cba-dfc9161f5816/SIGKILL
-> PATCH /363f6350-f81e-11e6-9cba-dfc9161f5816/SIGKILL HTTP/1.1
-< HTTP/1.1 500 Internal Server Error
-Internal Server Error%
+curl -vX PATCH localhost:3000/0f7b5910-f821-11e6-ac11-257a8674981b/SIGKILL
+> PATCH /0f7b5910-f821-11e6-ac11-257a8674981b/SIGKILL HTTP/1.1
+< HTTP/1.1 200 OK
+OK
 ```
