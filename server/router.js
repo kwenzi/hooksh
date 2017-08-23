@@ -1,6 +1,6 @@
 import express from 'express';
 import Store from './processStore';
-import decodedContent from './readConfig';
+import config from './readConfig';
 
 const router = express.Router();
 const store = new Store();
@@ -13,7 +13,7 @@ const store = new Store();
  */
 router.post('/:cmd', (req, res, next) => {
   const {cmd} = req.params;
-  const description = decodedContent[cmd];
+  const description = config.get(cmd);
   if (description) {
     const {
       command,
